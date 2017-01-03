@@ -17,7 +17,7 @@ public class ServiceGenerator {
 
     public static Retrofit retrofit;
 
-    public static String API_BASE_URL = "";
+    public static String API_BASE_URL = "http://api.tvmaze.com/";
 
     public static Gson gson = new GsonBuilder()
             .create();
