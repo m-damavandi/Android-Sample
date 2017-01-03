@@ -30,5 +30,75 @@ public class ShowModel {
     public ShowModel() {
     }
 
+    public int getId() {
+        return id;
+    }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public int getRuntime() {
+        return runtime;
+    }
+
+    public String getPremiered() {
+        return premiered;
+    }
+
+    public RatingModel getRating() {
+        return rating;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public NetworkModel getNetwork() {
+        return network;
+    }
+
+    public NetworkModel getWebChannel() {
+        return webChannel;
+    }
+
+    public ExternalsModel getExternals() {
+        return externals;
+    }
+
+    public ImageModel getImage() {
+        return image;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public long getUpdated() {
+        return updated;
+    }
+
+    public LinksModel get_links() {
+        return _links;
+    }
 }
