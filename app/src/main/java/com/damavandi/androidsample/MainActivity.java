@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.i(TAG, "onResponse: success");
                     List<ShowModel> showModels = response.body();
-                    MyAdapter mAdapter = new MyAdapter(showModels);
+                    MyAdapter mAdapter = new MyAdapter(showModels,getApplicationContext());
                     recyclerView.setAdapter(mAdapter);
                 } else {
                     Log.e(TAG, "onResponse: " + response.message());
