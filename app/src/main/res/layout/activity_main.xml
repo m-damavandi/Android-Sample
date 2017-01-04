@@ -23,4 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:scrollbars="vertical" />
+
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        android:layout_centerInParent="true"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progress_view"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true" />
 </RelativeLayout>

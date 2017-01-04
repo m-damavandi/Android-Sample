@@ -21,6 +21,7 @@ import com.damavandi.androidsample.interfaces.OnItemClickListener;
 import com.damavandi.androidsample.network.ServiceGenerator;
 import com.damavandi.androidsample.network.modeles.ShowModel;
 import com.damavandi.androidsample.network.services.ClientService;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static String TAG = "MainActivity";
     private RecyclerView recyclerView;
     private MyAdapter mAdapter;
+    private CircularProgressView progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "long clicked", Toast.LENGTH_SHORT).show();
                     }
                 }));
+
+        // init progress
+        progress = (CircularProgressView) findViewById(R.id.progress_view);
     }
 
     // get movie data from baseApiUrl/show,
@@ -121,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<ShowModel>> call, Response<List<ShowModel>> response) {
                 if (response.isSuccessful()) {
+                    progress.setVisibility(View.GONE);
                     Log.i(TAG, "onResponse: success");
                     List<ShowModel> showModels = response.body();
                     mAdapter = new MyAdapter(showModels, getApplicationContext());

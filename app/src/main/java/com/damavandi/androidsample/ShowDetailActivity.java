@@ -114,6 +114,7 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
                 finish();
             }
         });
+        setTitle(null);
 
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
