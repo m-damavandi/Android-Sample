@@ -2,10 +2,9 @@ package com.damavandi.androidsample;
 
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.TypedValue;
@@ -24,11 +23,7 @@ import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 public class ShowDetailActivity extends AppCompatActivity implements ObservableScrollViewCallbacks {
-
-    private static final float MAX_TEXT_SCALE_DELTA = 0.3f;
 
     private View mImageView;
     private View mOverlayView;
@@ -40,30 +35,27 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
     private int mFabMargin;
     private boolean mFabIsShown;
     private ShowModel showModel;
-    private TextView movieTitle,movieDetail,movieSummary;
+    private TextView movieTitle, movieDetail, movieSummary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_detail);
 
+        // get data from intent
         Intent intent = getIntent();
         showModel = intent.getExtras().getParcelable("show_object");
 
         initToolbar();
+        initView();
+        adaptView();
+    }
 
-        mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
-        mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
-        mActionBarSize = getActionBarSize();
-
+    private void initView() {
         mImageView = findViewById(R.id.image);
-        Picasso.with(getApplicationContext())
-                .load(showModel.getImage().getOriginal())
-                .into(((ImageView)mImageView));
         mOverlayView = findViewById(R.id.overlay);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
         mScrollView.setScrollViewCallbacks(this);
-        setTitle(null);
         mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,31 +72,38 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
             public void run() {
                 mScrollView.scrollTo(0, 1);
                 mScrollView.scrollTo(0, 0);
-
             }
         });
-
         movieTitle = (TextView) findViewById(R.id.movie_title);
+        movieDetail = (TextView) findViewById(R.id.movie_detail);
+        movieSummary = (TextView) findViewById(R.id.movie_summary);
+    }
+
+    private void adaptView() {
+        Picasso.with(getApplicationContext())
+                .load(showModel.getImage().getOriginal())
+                .into(((ImageView) mImageView));
+
+        // set movie title
         movieTitle.setText(showModel.getName());
 
-        movieDetail = (TextView) findViewById(R.id.movie_detail);
+        // set movie detail
         String premiered = showModel.getPremiered();
         try {
             String[] str = premiered.split("-");
-            premiered = str[0]+"."+str[1];
-        }catch (Exception e){
+            premiered = str[0] + "." + str[1];
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        movieDetail.setText(premiered +
+                " \u2022 " + showModel.getRuntime() +
+                " min" + " \u2022 " + showModel.getRating().getAverage() + "/10");
 
-        movieDetail.setText(premiered+
-                " \u2022 "+showModel.getRuntime()+
-                " min"+" \u2022 "+showModel.getRating().getAverage()+"/10");
-
-        movieSummary = (TextView) findViewById(R.id.movie_summary);
+        //set movie summary
         movieSummary.setText(Html.fromHtml(showModel.getSummary()));
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -115,6 +114,10 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
                 finish();
             }
         });
+
+        mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
+        mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
+        mActionBarSize = getActionBarSize();
     }
 
     @Override
