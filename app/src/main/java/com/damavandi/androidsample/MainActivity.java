@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String TAG = "MainActivity";
     private RecyclerView recyclerView;
+    private MyAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         //recycler item clicked
-                        startActivity(new Intent(getApplicationContext(),ShowDetailActivity.class));
+                        Intent intent = new Intent(getApplicationContext(),ShowDetailActivity.class);
+                        ShowModel showModel = mAdapter.getModel(position);
+                        intent.putExtra("show_object",showModel);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.i(TAG, "onResponse: success");
                     List<ShowModel> showModels = response.body();
-                    MyAdapter mAdapter = new MyAdapter(showModels, getApplicationContext());
+                    mAdapter = new MyAdapter(showModels, getApplicationContext());
                     recyclerView.setAdapter(mAdapter);
                 } else {
                     Log.e(TAG, "onResponse: " + response.message());

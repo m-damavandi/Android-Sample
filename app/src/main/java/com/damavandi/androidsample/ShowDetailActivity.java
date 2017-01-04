@@ -1,21 +1,26 @@
 package com.damavandi.androidsample;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damavandi.androidsample.network.modeles.ShowModel;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.squareup.picasso.Picasso;
 
 public class ShowDetailActivity extends AppCompatActivity implements ObservableScrollViewCallbacks {
 
@@ -31,17 +36,31 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
     private int mFlexibleSpaceImageHeight;
     private int mFabMargin;
     private boolean mFabIsShown;
+    private ShowModel showModel;
+    private View mToolbarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_detail);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        mToolbarView = findViewById(R.id.toolbar);
+        mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(0, getResources().getColor(R.color.primary)));
+
+        Intent intent = getIntent();
+        showModel = intent.getExtras().getParcelable("show_object");
+
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
         mActionBarSize = getActionBarSize();
 
         mImageView = findViewById(R.id.image);
+//        ((ImageView) mImageView).setImageResource(R.drawable.ic_image_white_48dp);
+        Picasso.with(getApplicationContext())
+                .load(showModel.getImage().getOriginal())
+                .resize(200,200)
+                .into(((ImageView)mImageView));
         mOverlayView = findViewById(R.id.overlay);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
         mScrollView.setScrollViewCallbacks(this);
@@ -116,6 +135,11 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
         } else {
             showFab();
         }
+
+        //Translate toolbar
+        int baseColor = getResources().getColor(R.color.primary);
+        float alpha = Math.min(1, (float) scrollY / mFlexibleSpaceImageHeight);
+        mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
     }
 
     @Override

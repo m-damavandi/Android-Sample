@@ -78,4 +78,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public int getItemCount() {
         return showModelList.size();
     }
+
+    public ShowModel getModel(int position){
+        return showModelList.get(position);
+    }
 }
