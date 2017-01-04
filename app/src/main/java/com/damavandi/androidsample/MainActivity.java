@@ -1,9 +1,9 @@
 package com.damavandi.androidsample;
 
 import android.app.SearchManager;
+import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +22,6 @@ import com.damavandi.androidsample.network.modeles.ShowModel;
 import com.damavandi.androidsample.network.services.ClientService;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
@@ -38,33 +37,36 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    public String TAG = "MainActivity";
+    public static String TAG = "MainActivity";
     private RecyclerView recyclerView;
-    private AccountHeader headerResult = null;
-    private Drawer drawer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initView();
+        loadMovieData();
+    }
+
+    private void initView() {
+        // init toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle("Android Sample");
 
+        // init drawer
         final IProfile profile = new ProfileDrawerItem()
                 .withName("user")
                 .withEmail("user_email@email.com");
 
-        headerResult = new AccountHeaderBuilder()
+        AccountHeader headerDrawer = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(true)
-//                .withHeaderBackground(R.drawable.header_background)
                 .addProfiles(
                         profile
                 )
-                .withSavedInstance(savedInstanceState)
                 .build();
 
         List<IDrawerItem> drawerItems = new ArrayList<>();
@@ -73,17 +75,16 @@ public class MainActivity extends AppCompatActivity {
         drawerItems.add(new PrimaryDrawerItem().withName("drawer item 2"));
         drawerItems.add(new PrimaryDrawerItem().withName("drawer item 3"));
 
-        drawer = new DrawerBuilder(this)
+        new DrawerBuilder(this)
                 .withActivity(this)
-                .withAccountHeader(headerResult)
-//                .withRootView(R.id.recycler_view)
+                .withAccountHeader(headerDrawer)
                 .withToolbar(toolbar)
                 .withDisplayBelowStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(drawerItems.toArray(new IDrawerItem[drawerItems.size()]))
-                .withSavedInstance(savedInstanceState)
                 .build();
 
+        // init recyclerView
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
@@ -93,19 +94,22 @@ public class MainActivity extends AppCompatActivity {
                         recyclerView, new OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        //recycler item clicked
                         Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onLongItemClick(View view, int position) {
+                        //recycler item long clicked
                         Toast.makeText(getApplicationContext(), "long clicked", Toast.LENGTH_SHORT).show();
                     }
                 }));
-
-        sampleRequest();
     }
 
-    private void sampleRequest() {
+    // get movie data from baseApiUrl/show,
+    // on success response adapt recyclerView
+    // TODO : on error and on failure show (error/retry) to client
+    private void loadMovieData() {
         ClientService client = ServiceGenerator.createService(ClientService.class);
         Call<List<ShowModel>> call = client.getShows();
 
@@ -119,12 +123,14 @@ public class MainActivity extends AppCompatActivity {
                     recyclerView.setAdapter(mAdapter);
                 } else {
                     Log.e(TAG, "onResponse: " + response.message());
+                    Toast.makeText(getApplicationContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<ShowModel>> call, Throwable t) {
                 Log.e(TAG, "onFailure:" + t.getMessage());
+                Toast.makeText(getApplicationContext(), R.string.connection_problem, Toast.LENGTH_SHORT).show();
             }
         });
     }
