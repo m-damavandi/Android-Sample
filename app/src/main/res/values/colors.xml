@@ -4,5 +4,6 @@
     <color name="colorPrimaryDark">#1368b8</color>
     <color name="colorAccent">#FF4081</color>
     <color name="marginColor">#33342c</color>
-    <color name="accentLight">#ff0000</color>
+    <color name="fabNormalColor">#fcfcfc</color>
+    <color name="fabPressedColor">#acacac</color>
 </resources>

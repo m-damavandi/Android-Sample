@@ -23,6 +23,8 @@ import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 public class ShowDetailActivity extends AppCompatActivity implements ObservableScrollViewCallbacks {
 
     private static final float MAX_TEXT_SCALE_DELTA = 0.3f;
@@ -37,6 +39,7 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
     private int mFabMargin;
     private boolean mFabIsShown;
     private ShowModel showModel;
+    private TextView movieTitle,movieDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +82,22 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
 
             }
         });
+
+        movieTitle = (TextView) findViewById(R.id.movie_title);
+        movieTitle.setText(showModel.getName());
+
+        movieDetail = (TextView) findViewById(R.id.movie_detail);
+        String premiered = showModel.getPremiered();
+        try {
+            String[] str = premiered.split("-");
+            premiered = str[0]+"."+str[1];
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        movieDetail.setText(premiered+
+                " \u2022 "+showModel.getRuntime()+
+                " min"+" \u2022 "+showModel.getRating().getAverage()+"/10");
     }
 
     private void initToolbar(){
