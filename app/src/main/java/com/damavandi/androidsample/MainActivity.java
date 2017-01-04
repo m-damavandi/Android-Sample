@@ -13,8 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import com.damavandi.androidsample.adapter.MyAdapter;
+import com.damavandi.androidsample.interfaces.OnItemClickListener;
 import com.damavandi.androidsample.network.ServiceGenerator;
 import com.damavandi.androidsample.network.modeles.ShowModel;
 import com.damavandi.androidsample.network.services.ClientService;
@@ -83,9 +85,22 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        LinearLayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),2);
+        LinearLayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getApplicationContext(),
+                        recyclerView, new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        Toast.makeText(getApplicationContext(), "long clicked", Toast.LENGTH_SHORT).show();
+                    }
+                }));
 
         sampleRequest();
     }
@@ -100,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.i(TAG, "onResponse: success");
                     List<ShowModel> showModels = response.body();
-                    MyAdapter mAdapter = new MyAdapter(showModels,getApplicationContext());
+                    MyAdapter mAdapter = new MyAdapter(showModels, getApplicationContext());
                     recyclerView.setAdapter(mAdapter);
                 } else {
                     Log.e(TAG, "onResponse: " + response.message());
