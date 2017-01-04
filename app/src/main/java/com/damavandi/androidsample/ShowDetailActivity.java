@@ -2,6 +2,7 @@ package com.damavandi.androidsample;
 
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,7 +30,6 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
     private View mImageView;
     private View mOverlayView;
     private ObservableScrollView mScrollView;
-    private TextView mTitleView;
     private View mFab;
     private int mActionBarSize;
     private int mFlexibleSpaceShowFabOffset;
@@ -37,35 +37,28 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
     private int mFabMargin;
     private boolean mFabIsShown;
     private ShowModel showModel;
-    private View mToolbarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_detail);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        mToolbarView = findViewById(R.id.toolbar);
-        mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(0, getResources().getColor(R.color.primary)));
-
         Intent intent = getIntent();
         showModel = intent.getExtras().getParcelable("show_object");
+
+        initToolbar();
 
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
         mActionBarSize = getActionBarSize();
 
         mImageView = findViewById(R.id.image);
-//        ((ImageView) mImageView).setImageResource(R.drawable.ic_image_white_48dp);
         Picasso.with(getApplicationContext())
                 .load(showModel.getImage().getOriginal())
-                .resize(200,200)
                 .into(((ImageView)mImageView));
         mOverlayView = findViewById(R.id.overlay);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
         mScrollView.setScrollViewCallbacks(this);
-        mTitleView = (TextView) findViewById(R.id.title);
-        mTitleView.setText(getTitle());
         setTitle(null);
         mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +81,19 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
         });
     }
 
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         // Translate overlay and image
@@ -98,18 +104,6 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
 
         // Change alpha of overlay
         ViewHelper.setAlpha(mOverlayView, ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1));
-
-        // Scale title text
-        float scale = 1 + ScrollUtils.getFloat((flexibleRange - scrollY) / flexibleRange, 0, MAX_TEXT_SCALE_DELTA);
-        ViewHelper.setPivotX(mTitleView, 0);
-        ViewHelper.setPivotY(mTitleView, 0);
-        ViewHelper.setScaleX(mTitleView, scale);
-        ViewHelper.setScaleY(mTitleView, scale);
-
-        // Translate title text
-        int maxTitleTranslationY = (int) (mFlexibleSpaceImageHeight - mTitleView.getHeight() * scale);
-        int titleTranslationY = maxTitleTranslationY - scrollY;
-        ViewHelper.setTranslationY(mTitleView, titleTranslationY);
 
         // Translate FAB
         int maxFabTranslationY = mFlexibleSpaceImageHeight - mFab.getHeight() / 2;
@@ -135,11 +129,6 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
         } else {
             showFab();
         }
-
-        //Translate toolbar
-        int baseColor = getResources().getColor(R.color.primary);
-        float alpha = Math.min(1, (float) scrollY / mFlexibleSpaceImageHeight);
-        mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
     }
 
     @Override
