@@ -35,6 +35,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             LinearLayout.LayoutParams params = new
                     LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,(displayWidth*3/4));
             image = (ImageView) view.findViewById(R.id.image_view);
+            // set ImageView size responsive
             image.setLayoutParams(params);
 
         }
@@ -60,9 +61,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        // load main grid image whit picasso library
         Picasso.with(context)
                 .load(showModelList.get(position).getImage().getOriginal())
+                // resize image to use less memory
                 .resize(displayWidth/2,displayWidth*3/4)
+                // set default image
+                .placeholder(R.drawable.ic_image_white_48dp)
+                // set on error image
+                .error(R.drawable.ic_broken_image_white_48dp)
                 .centerCrop()
                 .into(holder.image);
     }
