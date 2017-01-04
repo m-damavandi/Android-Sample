@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -39,7 +40,7 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
     private int mFabMargin;
     private boolean mFabIsShown;
     private ShowModel showModel;
-    private TextView movieTitle,movieDetail;
+    private TextView movieTitle,movieDetail,movieSummary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,9 @@ public class ShowDetailActivity extends AppCompatActivity implements ObservableS
         movieDetail.setText(premiered+
                 " \u2022 "+showModel.getRuntime()+
                 " min"+" \u2022 "+showModel.getRating().getAverage()+"/10");
+
+        movieSummary = (TextView) findViewById(R.id.movie_summary);
+        movieSummary.setText(Html.fromHtml(showModel.getSummary()));
     }
 
     private void initToolbar(){
