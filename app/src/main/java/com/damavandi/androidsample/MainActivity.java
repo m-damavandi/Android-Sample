@@ -1,6 +1,7 @@
 package com.damavandi.androidsample;
 
 import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
         loadMovieData();
     }
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         //recycler item clicked
-                        Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(),ShowDetailActivity.class));
                     }
 
                     @Override

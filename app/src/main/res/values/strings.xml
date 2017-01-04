@@ -3,4 +3,5 @@
     <string name="search">search…</string>
     <string name="connection_problem">Connection problem</string>
     <string name="error_occurred">error occurred</string>
+    <string name="lipsum">lipsum</string>
 </resources>
