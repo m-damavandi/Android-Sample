@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.i(TAG, "loadMovieData() onResponse: success");
                     List<ShowModel> showModels = response.body();
+                    recyclerView.setVisibility(View.VISIBLE);
                     mAdapter = new MyAdapter(showModels, getApplicationContext());
                     recyclerView.setAdapter(mAdapter);
                 } else {
