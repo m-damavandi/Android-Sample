@@ -11,6 +11,7 @@ import com.damavandi.androidsample.network.ServiceGenerator;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,9 +55,24 @@ public class MainActivityTest extends InstrumentationTestCase {
         Intent intent = new Intent();
         mActivityRule.launchActivity(intent);
 
-        onView(withId(R.id.recycler_view)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void testRetryButtonShowsWhenError() throws Exception{
+        String fileName = "error_response_404.json";
+        server.enqueue(new MockResponse()
+                .setResponseCode(404)
+                .setBody(RestServiceTestHelper.getStringFromFile(getInstrumentation().getContext(), fileName)));
 
+        Intent intent = new Intent();
+        mActivityRule.launchActivity(intent);
 
+        onView(withId(R.id.retry_button)).check(matches(isDisplayed()));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        server.shutdown();
+    }
 }
