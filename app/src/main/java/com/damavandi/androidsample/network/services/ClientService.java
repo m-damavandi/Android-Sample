@@ -13,6 +13,6 @@ import retrofit2.http.GET;
 
 public interface ClientService {
 
-    @GET("shows")
+    @GET("shows1")
     Call<List<ShowModel>> getShows();
 }

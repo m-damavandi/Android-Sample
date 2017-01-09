@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.damavandi.androidsample.adapter.MyAdapter;
 import com.damavandi.androidsample.interfaces.OnItemClickListener;
 import com.damavandi.androidsample.network.ServiceGenerator;
+import com.damavandi.androidsample.network.modeles.ErrorResponse;
 import com.damavandi.androidsample.network.modeles.ShowModel;
 import com.damavandi.androidsample.network.services.ClientService;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
@@ -31,12 +32,17 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -100,9 +106,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         //recycler item clicked
-                        Intent intent = new Intent(getApplicationContext(),ShowDetailActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ShowDetailActivity.class);
                         ShowModel showModel = mAdapter.getModel(position);
-                        intent.putExtra("show_object",showModel);
+                        intent.putExtra("show_object", showModel);
                         startActivity(intent);
                     }
 
@@ -140,21 +146,27 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<ShowModel>> call, Response<List<ShowModel>> response) {
                 progress.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
-                    Log.i(TAG, "onResponse: success");
+                    Log.i(TAG, "loadMovieData() onResponse: success");
                     List<ShowModel> showModels = response.body();
                     mAdapter = new MyAdapter(showModels, getApplicationContext());
                     recyclerView.setAdapter(mAdapter);
                 } else {
-                    retryBtn.setVisibility(View.VISIBLE);
-                    Log.e(TAG, "onResponse: " + response.message());
-                    Toast.makeText(getApplicationContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                    try {
+                        Converter<ResponseBody, ErrorResponse> errorConverter = ServiceGenerator.retrofit().responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+                        ErrorResponse error = errorConverter.convert(response.errorBody());
+                        retryBtn.setVisibility(View.VISIBLE);
+                        Log.e(TAG, "loadMovieData() onResponse: " + response.message());
+                        Toast.makeText(getApplicationContext(), error.getName(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<List<ShowModel>> call, Throwable t) {
                 progress.setVisibility(View.GONE);
-                Log.e(TAG, "onFailure:" + t.getMessage());
+                Log.e(TAG, "loadMovieData() onFailure:" + t.getMessage());
                 Toast.makeText(getApplicationContext(), R.string.connection_problem, Toast.LENGTH_SHORT).show();
             }
         });
