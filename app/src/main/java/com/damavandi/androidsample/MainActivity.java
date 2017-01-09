@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.damavandi.androidsample.adapter.MyAdapter;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MyAdapter mAdapter;
     private CircularProgressView progress;
+    private Button retryBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,25 +115,37 @@ public class MainActivity extends AppCompatActivity {
 
         // init progress
         progress = (CircularProgressView) findViewById(R.id.progress_view);
+
+        // init retry button
+        retryBtn = (Button) findViewById(R.id.retry_button);
+        retryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retryBtn.setVisibility(View.GONE);
+                loadMovieData();
+            }
+        });
     }
 
     // get movie data from baseApiUrl/show,
     // on success response adapt recyclerView
     // TODO : on error and on failure show (error/retry) to client
     private void loadMovieData() {
+        progress.setVisibility(View.VISIBLE);
         ClientService client = ServiceGenerator.createService(ClientService.class);
         Call<List<ShowModel>> call = client.getShows();
 
         call.enqueue(new Callback<List<ShowModel>>() {
             @Override
             public void onResponse(Call<List<ShowModel>> call, Response<List<ShowModel>> response) {
+                progress.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
-                    progress.setVisibility(View.GONE);
                     Log.i(TAG, "onResponse: success");
                     List<ShowModel> showModels = response.body();
                     mAdapter = new MyAdapter(showModels, getApplicationContext());
                     recyclerView.setAdapter(mAdapter);
                 } else {
+                    retryBtn.setVisibility(View.VISIBLE);
                     Log.e(TAG, "onResponse: " + response.message());
                     Toast.makeText(getApplicationContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
                 }
@@ -139,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ShowModel>> call, Throwable t) {
+                progress.setVisibility(View.GONE);
                 Log.e(TAG, "onFailure:" + t.getMessage());
                 Toast.makeText(getApplicationContext(), R.string.connection_problem, Toast.LENGTH_SHORT).show();
             }

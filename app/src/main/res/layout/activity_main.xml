@@ -14,8 +14,7 @@
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-    </android.support.v7.widget.Toolbar>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"></android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -24,12 +23,20 @@
         android:layout_below="@id/toolbar"
         android:scrollbars="vertical" />
 
-    <com.github.rahatarmanahmed.cpv.CircularProgressView
-        android:layout_centerInParent="true"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.github.rahatarmanahmed.cpv.CircularProgressView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/progress_view"
         android:layout_width="72dp"
         android:layout_height="72dp"
+        android:layout_centerInParent="true"
         app:cpv_animAutostart="true"
         app:cpv_indeterminate="true" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/retry_button"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/retry"
+        android:visibility="gone" />
 </RelativeLayout>
