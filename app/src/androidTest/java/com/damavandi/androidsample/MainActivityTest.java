@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -71,8 +72,26 @@ public class MainActivityTest extends InstrumentationTestCase {
         onView(withId(R.id.retry_button)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void testRecyclerViewItemClick() throws Exception {
+        String fileName = "movie_response_200.json";
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(RestServiceTestHelper.getStringFromFile(getInstrumentation().getContext(), fileName)));
+
+        Intent intent = new Intent();
+        mActivityRule.launchActivity(intent);
+
+        onView(withRecyclerView(R.id.recycler_view).atPosition(1)).perform(click());
+    }
+
+
     @After
     public void tearDown() throws Exception {
         server.shutdown();
+    }
+
+    public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
+        return new RecyclerViewMatcher(recyclerViewId);
     }
 }
